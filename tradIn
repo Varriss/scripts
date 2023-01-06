@@ -1,0 +1,44 @@
+#!/bin/bash
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+
+DEFAULT='\033[0m'
+
+formatFileArg() {
+    if [ -z "$2" ]; then
+        TARGET="$1"
+    else
+        if [ $1 = "file:" ]; then
+            TARGET="file://$2"
+        else
+            echo -e "${RED}Usage: ${GREEN}tradIn${RED} <${GREEN}fr${RED}/${GREEN}en${RED}> <${YELLOW}\"${GREEN}Sentence${YELLOW}\"${RED}/${GREEN}Word${RED}/${YELLOW}file: ${GREEN}filepath${RED}>${DEFAULT}"
+            exit 0
+        fi
+    fi
+}
+
+usageExit() {
+    echo -e "${RED}Usage: ${GREEN}tradIn${RED} <${GREEN}fr${RED}/${GREEN}en${RED}> <${YELLOW}\"${GREEN}Sentence${YELLOW}\"${RED}/${GREEN}Word${RED}/${YELLOW}file: ${GREEN}filepath${RED}>${DEFAULT}"
+    exit 0
+}
+
+if [ $# -ne 2 ] && [ $# -ne 3 ]; then
+    usageExit
+else
+    if [ $1 == "fr" ]; then
+        echo -e "${RED}EN to FR:${DEFAULT}"
+        formatFileArg "$2" "$3"
+        if [ -z "$TARGET" ]; then usageExit; fi
+        trans -b en:fr "$TARGET"
+    elif [ $1 == "en" ]; then
+        echo -e "${RED}FR to EN:${DEFAULT}"
+        formatFileArg "$2" "$3"
+        if [ -z "$TARGET" ]; then usageExit; fi
+        trans -b fr:en "$TARGET"
+    else
+        echo -e "${RED}Availible languages for this script are: ${GREEN}fr${RED} and ${GREEN}en${DEFAULT}"
+    fi
+fi
+
+exit 0
